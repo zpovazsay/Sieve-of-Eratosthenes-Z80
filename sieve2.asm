@@ -47,7 +47,7 @@ Sieve:
 
 loop3:      ld   b, high PrimeArray
 loop1:      inc  c              ; ++n
-			ret  m				; if (n == 128) return
+            ret  m              ; if (n == 128) return
             ld   a, (bc)        ; A = prime[n]
             or   a
             jp   z, loop1       ; if (!prime[n]) goto loop1
