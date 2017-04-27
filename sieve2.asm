@@ -144,6 +144,14 @@ InitArray:
 ; ======================================================================
 
 CreateSquareTable:
+
+;   unsigned int hl = 0;
+;   for (unsigned int b = 1; b < 128; ++b)
+;   {
+;     hl += 2 * b - 1;
+;     squareTable[b] = hl;
+;   }
+
             ld   d, high squareTable
             ld   hl, 0
             ld   b, 1
@@ -211,14 +219,14 @@ Num2:       inc  a
             jr   c, Num2
             sbc  hl, bc
             cp   d
-            jr   z, leading_space
+            jr   nz, no_leading_space
+            ld   a, ' '
+            db   0x20            ; jr nz, ... (skip dec d)
+no_leading_space:
             dec  d
 xxx:        ld   (ix + 0), a
             inc  ix
             ret
-leading_space:
-            ld   a, ' '
-            jr   xxx
 
 fillen:     equ  $ - 0x100
 
