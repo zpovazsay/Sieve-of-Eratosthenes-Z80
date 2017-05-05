@@ -25,19 +25,12 @@ VID_CH:     equ  120
             ld   sp, 0x100
             ei
 
-            ld   a, 12
-            out  (191), a
-            ld   a, 0xc9
-            ld   (0x38), a
-
             call Init
             call InitArray
             call CreateSquareTable
             call Sieve
             call WritePrimeNumbers
 
-            ld   a, 0xf5
-            ld   (0x38), a
 vege:       jr   vege
 
 ; ======================================================================
@@ -84,6 +77,11 @@ NoRAM:      out  (0x81), a
 ; ======================================================================
 
 Init:
+            ld   a, 12
+            out  (191), a       ; no waits on memory access
+            ld   a, 0xc9        ; RET opcode
+            ld   (0x38), a
+
             exos 24
             jr   nz, NoRAM
             ld   a, c
@@ -177,8 +175,13 @@ CreateSquareTable:
 ; ======================================================================
 
 WritePrimeNumbers:
+
+            ; printf("%5u   ", 2);
             ld   hl, 2
             call writeHL
+
+            ; for (unsigned int n = 1; n < 32768; ++n)
+            ;   if (prime[n]) printf("%5u   ", n * 2 + 1);
             ld   hl, PrimeArray
 _loop1:     inc  hl
             bit  7, h
@@ -193,6 +196,8 @@ _loop1:     inc  hl
             call writeHL
             pop  hl
             jp   _loop1
+
+; ======================================================================
 
 writeHL:    ld   ix, str
             call Num2Dec
